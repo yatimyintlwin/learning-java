@@ -22,37 +22,45 @@ public class ProductServiceImpl implements ProductService {
         if (product.getId() == null || product.getId().isEmpty()) {
             product.setId(UUID.randomUUID().toString());
         }
+        product.setPk("product");
         productRepository.save(product);
         return product;
     }
 
     @Override
-    public Product getProductById(String id) {
-        Product product = productRepository.findById(id);
+    public Product getProductByPkAndId(String pk, String id) {
+        Product product = productRepository.findByPkAndId(pk, id);
         if (product == null) {
-            throw new ProductNotFoundException("Product not found with ID: " + id);
+            throw new ProductNotFoundException("Product not found with pk: " + pk + " and id: " + id);
         }
         return product;
     }
 
     @Override
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.getAll();
     }
 
     @Override
-    public Product updateProduct(String id, Product updated) {
-        Product existingProduct = getProductById(id);
+    public Product updateProduct(String pk, String id, Product updated) {
+        Product existingProduct = productRepository.findByPkAndId(pk, id);
+        if (existingProduct == null) {
+            throw new ProductNotFoundException("Product not found with pk: " + pk + " and id: " + id);
+        }
         existingProduct.setName(updated.getName());
         existingProduct.setDescription(updated.getDescription());
         existingProduct.setPrice(updated.getPrice());
-        productRepository.save(existingProduct);
+        existingProduct.setPk(pk);
+        productRepository.update(existingProduct);
         return existingProduct;
     }
 
     @Override
-    public void deleteProduct(String id) {
-        Product product = getProductById(id);
-        productRepository.deleteById(id);
+    public void deleteProduct(String pk, String id) {
+        Product product = productRepository.findByPkAndId(pk, id);
+        if (product == null) {
+            throw new ProductNotFoundException("Cannot delete. Product with pk " + pk + " and id " + id + " not found.");
+        }
+        productRepository.deleteByPkAndId(pk, id);
     }
 }

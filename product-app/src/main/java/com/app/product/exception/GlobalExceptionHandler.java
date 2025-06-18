@@ -16,10 +16,10 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception ex) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Object> handleGenericException(Exception ex) {
+//        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+//    }
 
     private ResponseEntity<Object> buildResponse(HttpStatus status, String message) {
         Map<String, Object> errorBody = new LinkedHashMap<>();

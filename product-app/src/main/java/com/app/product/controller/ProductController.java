@@ -21,20 +21,20 @@ public class ProductController {
         return ResponseEntity.ok(productService.createProduct(product));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getById(@PathVariable String id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    @GetMapping("/{pk}/{id}")
+    public ResponseEntity<Product> getByPkAndId(@PathVariable String pk, @PathVariable String id) {
+        return ResponseEntity.ok(productService.getProductByPkAndId(pk, id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable String id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
+    @PutMapping("/{pk}/{id}")
+    public ResponseEntity<Product> update(@PathVariable String pk, @PathVariable String id, @RequestBody Product product) {
+        return ResponseEntity.ok(productService.updateProduct(pk, id, product));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{pk}/{id}")
+    public ResponseEntity<String> delete(@PathVariable String pk, @PathVariable String id) {
+        productService.deleteProduct(pk, id);
+        return ResponseEntity.ok("Product with pk " + pk + " and ID " + id + " was deleted successfully.");
     }
 
     @GetMapping
