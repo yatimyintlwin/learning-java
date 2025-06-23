@@ -1,0 +1,15 @@
+# Ignore logging folder and all its contents
+logging/
+
+# Ignore all .log files anywhere in the project
+*.log
+
+# Ignore log files in any logs directory
+logs/
+**/logs/
+
+# Common Java logging patterns
+*.log.*
+*.out
+*.err
+
