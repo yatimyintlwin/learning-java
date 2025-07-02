@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean("userDetailsServiceMemory")
+    @Bean("userDetailsServiceInMemory")
     public InMemoryUserDetailsManager userDetailsService() {
         UserDetails admin = User.withUsername("admin")
                 .password(passwordEncoder().encode("admin1234"))
@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     @Bean("authenticationManager")
     public AuthenticationManager authenticationManager(
-            @Qualifier("H2")UserDetailsService userDetailsService,
+            @Qualifier("DynamoDB")UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
