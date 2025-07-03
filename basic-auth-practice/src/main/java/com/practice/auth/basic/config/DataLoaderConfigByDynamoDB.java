@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import java.util.Optional;
 
 @Configuration
+@Profile("dynamodb")
 @RequiredArgsConstructor
 public class DataLoaderConfigByDynamoDB {
     private final DynamoDBRepository dynamoDBRepository;
@@ -32,11 +34,11 @@ public class DataLoaderConfigByDynamoDB {
 
             Optional<AppUserByDynamoDB> existing = dynamoDBRepository.findByUsername("admin");
             if (existing.isEmpty()) {
-                dynamoDBRepository.save(new AppUserByDynamoDB("guest", passwordEncoder.encode("guest123"), "GUEST"));
-                dynamoDBRepository.save(new AppUserByDynamoDB("customer", passwordEncoder.encode("customer123"), "USER"));
+                dynamoDBRepository.save(new AppUserByDynamoDB("guest", passwordEncoder.encode("guest321"), "GUEST"));
+                dynamoDBRepository.save(new AppUserByDynamoDB("customer", passwordEncoder.encode("customer321"), "USER"));
                 dynamoDBRepository.save(new AppUserByDynamoDB("manager", passwordEncoder.encode("manager321"), "MANAGER"));
-                dynamoDBRepository.save(new AppUserByDynamoDB("admin", passwordEncoder.encode("admin123"), "ADMIN"));
-                dynamoDBRepository.save(new AppUserByDynamoDB("admin2", passwordEncoder.encode("admin1234"), "ADMIN"));
+                dynamoDBRepository.save(new AppUserByDynamoDB("admin", passwordEncoder.encode("admin321"), "ADMIN"));
+                dynamoDBRepository.save(new AppUserByDynamoDB("admin2", passwordEncoder.encode("admin4321"), "ADMIN"));
             }
         };
     }

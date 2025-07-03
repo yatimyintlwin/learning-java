@@ -2,6 +2,7 @@ package com.practice.auth.basic.repository.impl;
 
 import com.practice.auth.basic.model.AppUserByDynamoDB;
 import com.practice.auth.basic.repository.DynamoDBRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
@@ -11,6 +12,7 @@ import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import java.util.Optional;
 
 @Repository
+@Profile("dynamodb")
 public class DynamoDBRepositoryImpl implements DynamoDBRepository {
     private final DynamoDbEnhancedClient enhancedClient;
     private final TableSchema<AppUserByDynamoDB> tableSchema;

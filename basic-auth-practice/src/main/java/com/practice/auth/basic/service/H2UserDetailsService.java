@@ -3,6 +3,7 @@ package com.practice.auth.basic.service;
 import com.practice.auth.basic.model.AppUserByH2;
 import com.practice.auth.basic.repository.H2UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,8 +11,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service("H2")
+@Profile("h2")
 @RequiredArgsConstructor
-public class CustomUserDetailsServiceImpl implements UserDetailsService {
+public class H2UserDetailsService implements UserDetailsService {
     private final H2UserRepository userRepository;
     
     @Override
