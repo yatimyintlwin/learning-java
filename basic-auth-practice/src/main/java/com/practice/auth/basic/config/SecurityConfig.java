@@ -1,14 +1,11 @@
 package com.practice.auth.basic.config;
 
-import com.practice.auth.basic.utils.JwtUtils;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
@@ -21,15 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtUtils jwtUtils;
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, @Qualifier("H2") UserDetailsService userDetailsService) throws Exception {
-        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtUtils, userDetailsService);
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -40,8 +31,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/guest/**").hasRole("GUEST")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers.frameOptions(Customizer.withDefaults()));
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                .headers(headers -> headers.frameOptions(Customizer.withDefaults()));
 //                .httpBasic(Customizer.withDefaults());
 
         return http.build();
@@ -58,7 +49,7 @@ public class SecurityConfig {
 
     @Bean("authenticationManager")
     public AuthenticationManager authenticationManager(
-            @Qualifier("H2") UserDetailsService userDetailsService,
+            @Qualifier("DynamoDB") UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);

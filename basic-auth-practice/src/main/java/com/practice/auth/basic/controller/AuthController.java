@@ -1,8 +1,8 @@
 package com.practice.auth.basic.controller;
 
+import com.practice.auth.basic.model.AuthRequest;
 import com.practice.auth.basic.utils.JwtUtils;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,16 +13,19 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthController {
-
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+
+    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
+    }
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody @Valid AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password())
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
         UserDetails user = (UserDetails) authentication.getPrincipal();
@@ -35,6 +38,4 @@ public class AuthController {
     public Map<String, String> me(Authentication authentication) {
         return Map.of("user", authentication.getName());
     }
-
-    public record AuthRequest(String username, String password) {}
 }
