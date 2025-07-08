@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 public class JwtFilterConfig {
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtils jwtUtils, @Qualifier("DynamoDB") UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtUtils jwtUtils, @Qualifier("H2") UserDetailsService userDetailsService) {
         return new JwtAuthenticationFilter(jwtUtils, userDetailsService);
     }
 }

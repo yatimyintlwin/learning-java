@@ -24,8 +24,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/public", "/h2-console/**").permitAll()
-                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/public", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/guest/**").hasRole("GUEST")
@@ -49,7 +49,7 @@ public class SecurityConfig {
 
     @Bean("authenticationManager")
     public AuthenticationManager authenticationManager(
-            @Qualifier("DynamoDB") UserDetailsService userDetailsService,
+            @Qualifier("H2") UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);

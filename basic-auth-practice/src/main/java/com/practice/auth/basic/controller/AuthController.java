@@ -1,8 +1,11 @@
 package com.practice.auth.basic.controller;
 
 import com.practice.auth.basic.model.AuthRequest;
+import com.practice.auth.basic.service.RegisterService;
 import com.practice.auth.basic.utils.JwtUtils;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,10 +19,12 @@ import java.util.Map;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final RegisterService registerService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils, RegisterService registerService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.registerService = registerService;
     }
 
     @PostMapping("/login")
@@ -34,8 +39,14 @@ public class AuthController {
         return Map.of("token", token);
     }
 
-    @GetMapping("/me")
-    public Map<String, String> me(Authentication authentication) {
-        return Map.of("user", authentication.getName());
+    @PostMapping("/register")
+    public ResponseEntity<Map<String, String>> register(@RequestBody @Valid AuthRequest authRequest) {
+        try {
+            registerService.registerUser(authRequest);
+            return ResponseEntity.ok(Map.of("message", "User registered successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 }
