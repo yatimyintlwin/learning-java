@@ -2,7 +2,6 @@ package com.practice.auth.basic.service;
 
 import com.practice.auth.basic.model.AppUserByDynamoDB;
 import com.practice.auth.basic.repository.DynamoDBRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,9 +11,12 @@ import org.springframework.stereotype.Service;
 
 @Service("DynamoDB")
 @Profile("dynamodb")
-@RequiredArgsConstructor
-public class DynamoDBUserService implements UserDetailsService {
+public class UserDetailsServiceByDynamoDB implements UserDetailsService {
     private final DynamoDBRepository dynamoDBRepository;
+
+    public UserDetailsServiceByDynamoDB(DynamoDBRepository dynamoDBRepository) {
+        this.dynamoDBRepository = dynamoDBRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

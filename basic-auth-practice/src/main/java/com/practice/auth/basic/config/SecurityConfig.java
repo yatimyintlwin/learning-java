@@ -51,7 +51,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             @Qualifier("H2") UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);  //read
         provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(provider);
     }

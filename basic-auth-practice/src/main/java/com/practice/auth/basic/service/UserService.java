@@ -2,6 +2,6 @@ package com.practice.auth.basic.service;
 
 import com.practice.auth.basic.model.AuthRequest;
 
-public interface RegisterService {
+public interface UserService {
     void registerUser(AuthRequest request);
 }

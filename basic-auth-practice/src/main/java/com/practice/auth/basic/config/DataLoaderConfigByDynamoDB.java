@@ -2,7 +2,6 @@ package com.practice.auth.basic.config;
 
 import com.practice.auth.basic.model.AppUserByDynamoDB;
 import com.practice.auth.basic.repository.DynamoDBRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +15,14 @@ import java.util.Optional;
 
 @Configuration
 @Profile("dynamodb")
-@RequiredArgsConstructor
 public class DataLoaderConfigByDynamoDB {
     private final DynamoDBRepository dynamoDBRepository;
     private final DynamoDbEnhancedClient enhancedClient;
+
+    public DataLoaderConfigByDynamoDB(DynamoDBRepository dynamoDBRepository, DynamoDbEnhancedClient enhancedClient) {
+        this.dynamoDBRepository = dynamoDBRepository;
+        this.enhancedClient = enhancedClient;
+    }
 
     @Bean
     public CommandLineRunner dataLoader(PasswordEncoder passwordEncoder) {

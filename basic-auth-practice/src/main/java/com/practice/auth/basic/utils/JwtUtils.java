@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtils {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("my-super-secret-jwt-key-that-is-long-enough".getBytes());
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("SecretKey123".getBytes());
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
@@ -28,12 +28,7 @@ public class JwtUtils {
         return parseClaims(token).getSubject();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return parseClaims(token).getExpiration().before(new Date());
     }
 

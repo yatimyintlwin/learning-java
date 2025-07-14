@@ -1,5 +1,6 @@
 package com.practice.auth.basic.controller;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,7 @@ public class ApiController {
 
     @GetMapping("/api/manager/info")
     public String managerApi() {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         return "Manager access granted.";
     }
 
