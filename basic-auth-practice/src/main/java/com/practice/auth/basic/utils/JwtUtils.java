@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtUtils {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("SecretKey123".getBytes());
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("MySecretKeyForJwtTokenGeneration1234567890".getBytes());
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
