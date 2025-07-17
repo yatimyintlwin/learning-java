@@ -25,15 +25,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/public", "/h2-console/**").permitAll()
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/guest/**").hasRole("GUEST")
+                        .requestMatchers("/api/guest/**").hasAnyRole("GUEST", "ADMIN")
                         .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                );
 //                .headers(headers -> headers.frameOptions(Customizer.withDefaults()));
 //                .httpBasic(Customizer.withDefaults());
 
