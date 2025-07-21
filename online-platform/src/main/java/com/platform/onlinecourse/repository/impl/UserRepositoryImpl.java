@@ -13,7 +13,7 @@ import java.util.Map;
 public class UserRepositoryImpl implements UserRepository {
 
     private final DynamoDbClient dynamoDbClient;
-    private final String tableName = "OnlinePlatform";
+    private final String tableName = "OnlinePlatForm";
 
     public UserRepositoryImpl(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
@@ -22,10 +22,12 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User save(User user) {
         Map<String, AttributeValue> item = new HashMap<>();
-        item.put("pk", AttributeValue.fromS(user.getUsername()));
-        item.put("sk", AttributeValue.fromS("ROLE#" + user.getRole()));
+        item.put("pk", AttributeValue.fromS("USERS"));
+        item.put("sk", AttributeValue.fromS("USERNAME#" + user.getUsername()));
         item.put("id", AttributeValue.fromS(user.getId()));
+        item.put("username", AttributeValue.fromS(user.getUsername()));
         item.put("password", AttributeValue.fromS(user.getPassword()));
+        item.put("role", AttributeValue.fromS(user.getRole().toUpperCase()));
         item.put("enabled", AttributeValue.fromBool(user.isEnabled()));
 
         PutItemRequest request = PutItemRequest.builder()
@@ -41,13 +43,16 @@ public class UserRepositoryImpl implements UserRepository {
     public User findByUsername(String username) {
         QueryRequest request = QueryRequest.builder()
                 .tableName(tableName)
-                .keyConditionExpression("pk = :username")
-                .expressionAttributeValues(Map.of(":username", AttributeValue.fromS(username)))
+                .keyConditionExpression("pk = :pk AND sk = :sk")
+                .expressionAttributeValues(Map.of(
+                        ":pk", AttributeValue.fromS("USERS"),
+                        ":sk", AttributeValue.fromS("USERNAME#" + username)
+                ))
                 .build();
 
         QueryResponse response = dynamoDbClient.query(request);
 
-        if (!response.hasItems() || response.items().isEmpty()) {
+        if (response.count() == 0) {
             return null;
         }
 
@@ -62,24 +67,24 @@ public class UserRepositoryImpl implements UserRepository {
         }
 
         Map<String, AttributeValue> key = new HashMap<>();
-        key.put("pk", AttributeValue.fromS(username));
-        key.put("sk", AttributeValue.fromS("ROLE#" + user.getRole()));
+        key.put("pk", AttributeValue.fromS("USERS"));
+        key.put("sk", AttributeValue.fromS("USERNAME#" + username));
 
-        DeleteItemRequest request = DeleteItemRequest.builder()
+        DeleteItemRequest deleteRequest = DeleteItemRequest.builder()
                 .tableName(tableName)
                 .key(key)
                 .build();
 
-        dynamoDbClient.deleteItem(request);
+        dynamoDbClient.deleteItem(deleteRequest);
         return user;
     }
 
     private User mapToUser(Map<String, AttributeValue> item) {
         User user = new User();
-        user.setId(item.get("id").s());
-        user.setUsername(item.get("pk").s());
-        user.setRole(item.get("sk").s().replace("ROLE#", ""));
+        user.setId(item.get("id").s().replace("USER#", ""));
+        user.setUsername(item.get("username").s());
         user.setPassword(item.get("password").s());
+        user.setRole(item.get("role").s());
         user.setEnabled(item.get("enabled").bool());
         return user;
     }

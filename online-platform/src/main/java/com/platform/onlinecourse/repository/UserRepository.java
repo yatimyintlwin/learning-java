@@ -7,4 +7,3 @@ public interface UserRepository {
     User findByUsername(String username);
     User deleteById(String username);
 }
-

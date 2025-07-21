@@ -9,7 +9,7 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 public class DynamoDBInitializer {
 
     private final DynamoDbClient dynamoDbClient;
-    private final String tableName = "OnlinePlatform";
+    private final String tableName = "OnlinePlatForm";
 
     public DynamoDBInitializer(DynamoDbClient dynamoDbClient) {
         this.dynamoDbClient = dynamoDbClient;
