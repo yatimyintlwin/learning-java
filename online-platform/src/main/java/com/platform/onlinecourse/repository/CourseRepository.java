@@ -7,4 +7,6 @@ import java.util.List;
 public interface CourseRepository {
     Course save(Course course);
     List<Course> findAll();
+
+    Course findByCourseTitle(String title);
 }

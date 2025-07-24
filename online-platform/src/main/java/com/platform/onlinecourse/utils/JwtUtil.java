@@ -3,6 +3,7 @@ package com.platform.onlinecourse.utils;
 import com.platform.onlinecourse.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,11 +13,13 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "MySecretKeyForJwtTokenGeneration1234567890";
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
     private static final Duration EXPIRATION = Duration.ofHours(1);
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateToken(User user) {

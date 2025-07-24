@@ -9,6 +9,8 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.platform.onlinecourse.mapper.UserMapper.mapToUser;
+
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -23,7 +25,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User save(User user) {
         Map<String, AttributeValue> item = new HashMap<>();
         item.put("pk", AttributeValue.fromS("USERS"));
-        item.put("sk", AttributeValue.fromS("USERNAME#" + user.getUsername()));
+        item.put("sk", AttributeValue.fromS("USERNAME#" + user.getUsername().toLowerCase().replaceAll("\\s+", "")));
         item.put("id", AttributeValue.fromS(user.getId()));
         item.put("username", AttributeValue.fromS(user.getUsername()));
         item.put("password", AttributeValue.fromS(user.getPassword()));
@@ -33,6 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
+                .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
         dynamoDbClient.putItem(request);
@@ -73,19 +76,10 @@ public class UserRepositoryImpl implements UserRepository {
         DeleteItemRequest deleteRequest = DeleteItemRequest.builder()
                 .tableName(tableName)
                 .key(key)
+                .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
         dynamoDbClient.deleteItem(deleteRequest);
-        return user;
-    }
-
-    private User mapToUser(Map<String, AttributeValue> item) {
-        User user = new User();
-        user.setId(item.get("id").s().replace("USER#", ""));
-        user.setUsername(item.get("username").s());
-        user.setPassword(item.get("password").s());
-        user.setRole(item.get("role").s());
-        user.setEnabled(item.get("enabled").bool());
         return user;
     }
 }

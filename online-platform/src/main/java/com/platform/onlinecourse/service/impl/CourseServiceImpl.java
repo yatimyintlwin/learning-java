@@ -1,5 +1,7 @@
 package com.platform.onlinecourse.service.impl;
 
+import com.platform.onlinecourse.exception.CourseNotFoundException;
+import com.platform.onlinecourse.exception.InvalidCredentialsException;
 import com.platform.onlinecourse.model.Course;
 import com.platform.onlinecourse.repository.CourseRepository;
 import com.platform.onlinecourse.service.CourseService;
@@ -19,6 +21,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(Course course) {
+        if(courseRepository.findByCourseTitle(course.getTitle()) != null) {
+            throw new InvalidCredentialsException("Course already exists");
+        }
+
         course.setId(UUID.randomUUID().toString());
         course.setTitle(course.getTitle());
         course.setDescription(course.getDescription());
@@ -27,6 +33,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+        List<Course> courses = courseRepository.findAll();
+        if (courses.isEmpty()) {
+            throw new CourseNotFoundException("No courses available");
+        }
+        return courses;
     }
 }

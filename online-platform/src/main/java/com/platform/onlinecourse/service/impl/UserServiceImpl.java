@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()) != null) {
-            throw new RuntimeException("Username already exists");
+            throw new InvalidCredentialsException("Username already exists");
         }
 
         User user = new User();
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid password");
+            throw new InvalidCredentialsException("Invalid password or username");
         }
 
         return jwtUtil.generateToken(user);
