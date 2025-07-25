@@ -27,22 +27,22 @@
         </encoder>
     </appender>
 
-<!--    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">-->
-<!--        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">-->
-<!--            <prettyPrint>true</prettyPrint>-->
-<!--            <providers>-->
-<!--                <timestamp><fieldName>timestamp</fieldName></timestamp>-->
-<!--                <logLevel><fieldName>level</fieldName></logLevel>-->
-<!--                <loggerName><fieldName>logger</fieldName></loggerName>-->
-<!--                <threadName><fieldName>thread</fieldName></threadName>-->
-<!--                <message><fieldName>message</fieldName></message>-->
-<!--                <stackTrace><fieldName>stacktrace</fieldName></stackTrace>-->
-<!--            </providers>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <prettyPrint>true</prettyPrint>
+            <providers>
+                <timestamp><fieldName>timestamp</fieldName></timestamp>
+                <logLevel><fieldName>level</fieldName></logLevel>
+                <loggerName><fieldName>logger</fieldName></loggerName>
+                <threadName><fieldName>thread</fieldName></threadName>
+                <message><fieldName>message</fieldName></message>
+                <stackTrace><fieldName>stacktrace</fieldName></stackTrace>
+            </providers>
+        </encoder>
+    </appender>
 
     <root level="DEBUG">
-<!--        <appender-ref ref="console"/>-->
+        <appender-ref ref="console"/>
         <appender-ref ref="ROLLING_FILE"/>
     </root>
 </configuration>

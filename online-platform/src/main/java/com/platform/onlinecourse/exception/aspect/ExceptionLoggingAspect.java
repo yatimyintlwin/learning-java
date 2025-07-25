@@ -12,7 +12,7 @@ import java.util.Arrays;
 @Component
 public class ExceptionLoggingAspect {
 
-    @Around("execution(* com.platform.onlinecourse.service.impl.*(..))")
+    @Around("execution(* com.platform.onlinecourse.service.impl.*.*(..))") 
     public Object logAroundMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
         Object[] args = joinPoint.getArgs();

@@ -2,6 +2,7 @@ package com.platform.onlinecourse.repository.impl;
 
 import com.platform.onlinecourse.model.User;
 import com.platform.onlinecourse.repository.UserRepository;
+import com.platform.onlinecourse.utils.NormalizationUtil;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -25,7 +26,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User save(User user) {
         Map<String, AttributeValue> item = new HashMap<>();
         item.put("pk", AttributeValue.fromS("USERS"));
-        item.put("sk", AttributeValue.fromS("USERNAME#" + user.getUsername().toLowerCase().replaceAll("\\s+", "")));
+        item.put("sk", AttributeValue.fromS("USERNAME#" + NormalizationUtil.normalize(user.getUsername())));
         item.put("id", AttributeValue.fromS(user.getId()));
         item.put("username", AttributeValue.fromS(user.getUsername()));
         item.put("password", AttributeValue.fromS(user.getPassword()));
@@ -44,12 +45,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User findByUsername(String username) {
+        String normalizedUsername = NormalizationUtil.normalize(username);
         QueryRequest request = QueryRequest.builder()
                 .tableName(tableName)
                 .keyConditionExpression("pk = :pk AND sk = :sk")
                 .expressionAttributeValues(Map.of(
                         ":pk", AttributeValue.fromS("USERS"),
-                        ":sk", AttributeValue.fromS("USERNAME#" + username)
+                        ":sk", AttributeValue.fromS("USERNAME#" + normalizedUsername)
                 ))
                 .build();
 
@@ -61,6 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         return mapToUser(response.items().get(0));
     }
+
 
     @Override
     public User deleteById(String username) {
