@@ -3,7 +3,7 @@ package com.platform.onlinecourse.controller;
 import com.platform.onlinecourse.dto.AuthResponse;
 import com.platform.onlinecourse.dto.LoginRequest;
 import com.platform.onlinecourse.dto.RegisterRequest;
-import com.platform.onlinecourse.model.User;
+import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AppUser> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(userService.register(request));
     }
 

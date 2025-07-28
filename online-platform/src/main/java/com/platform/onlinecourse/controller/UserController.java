@@ -1,6 +1,6 @@
 package com.platform.onlinecourse.controller;
 
-import com.platform.onlinecourse.model.User;
+import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,8 +22,8 @@ public class UserController {
     @DeleteMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable String username) {
-        User deletedUser = userService.deleteUser(username);
-        if (deletedUser == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok("User deleted successfully");
+        AppUser deletedAppUser = userService.deleteUser(username);
+        if (deletedAppUser == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok("AppUser deleted successfully");
     }
 }

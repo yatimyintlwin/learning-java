@@ -1,6 +1,6 @@
 package com.platform.onlinecourse.repository.impl;
 
-import com.platform.onlinecourse.model.User;
+import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
 import com.platform.onlinecourse.utils.NormalizationUtil;
 import org.springframework.stereotype.Repository;
@@ -23,15 +23,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
+    public AppUser save(AppUser appUser) {
         Map<String, AttributeValue> item = new HashMap<>();
         item.put("pk", AttributeValue.fromS("USERS"));
-        item.put("sk", AttributeValue.fromS("USERNAME#" + NormalizationUtil.normalize(user.getUsername())));
-        item.put("id", AttributeValue.fromS(user.getId()));
-        item.put("username", AttributeValue.fromS(user.getUsername()));
-        item.put("password", AttributeValue.fromS(user.getPassword()));
-        item.put("role", AttributeValue.fromS(user.getRole().toUpperCase()));
-        item.put("enabled", AttributeValue.fromBool(user.isEnabled()));
+        item.put("sk", AttributeValue.fromS("USERNAME#" + NormalizationUtil.normalize(appUser.getUsername())));
+        item.put("id", AttributeValue.fromS(appUser.getId()));
+        item.put("username", AttributeValue.fromS(appUser.getUsername()));
+        item.put("password", AttributeValue.fromS(appUser.getPassword()));
+        item.put("role", AttributeValue.fromS(appUser.getRole().toUpperCase()));
+        item.put("enabled", AttributeValue.fromBool(appUser.isEnabled()));
 
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
@@ -40,11 +40,11 @@ public class UserRepositoryImpl implements UserRepository {
                 .build();
 
         dynamoDbClient.putItem(request);
-        return user;
+        return appUser;
     }
 
     @Override
-    public User findByUsername(String username) {
+    public AppUser findByUsername(String username) {
         String normalizedUsername = NormalizationUtil.normalize(username);
         QueryRequest request = QueryRequest.builder()
                 .tableName(tableName)
@@ -66,9 +66,9 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     @Override
-    public User deleteById(String username) {
-        User user = findByUsername(username);
-        if (user == null) {
+    public AppUser deleteById(String username) {
+        AppUser appUser = findByUsername(username);
+        if (appUser == null) {
             return null;
         }
 
@@ -83,6 +83,6 @@ public class UserRepositoryImpl implements UserRepository {
                 .build();
 
         dynamoDbClient.deleteItem(deleteRequest);
-        return user;
+        return appUser;
     }
 }

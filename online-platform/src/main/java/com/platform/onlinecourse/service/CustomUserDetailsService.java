@@ -1,12 +1,10 @@
 package com.platform.onlinecourse.service;
 
-import com.platform.onlinecourse.model.User;
+import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
 import org.springframework.security.core.userdetails.*;
 
 import org.springframework.stereotype.Service;
-
-import static com.platform.onlinecourse.mapper.UserDetailMapper.mapToUserDetail;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,12 +17,16 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        AppUser appUser = userRepository.findByUsername(username);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found or not enabled: " + username);
+        if (appUser == null) {
+            throw new UsernameNotFoundException("AppUser not found or not enabled: " + username);
         }
 
-        return mapToUserDetail(user.getUsername(), user.getPassword(), user.getRole());
+        return User.builder()
+                .username(appUser.getUsername())
+                .password(appUser.getPassword())
+                .roles(appUser.getRole())
+                .build();
     }
 }

@@ -1,10 +1,10 @@
 package com.platform.onlinecourse.repository;
 
-import com.platform.onlinecourse.model.User;
+import com.platform.onlinecourse.model.AppUser;
 
 public interface UserRepository {
-    User save(User user);
+    AppUser save(AppUser appUser);
 
-    User findByUsername(String username);
-    User deleteById(String username);
+    AppUser findByUsername(String username);
+    AppUser deleteById(String username);
 }
