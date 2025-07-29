@@ -26,18 +26,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, "AppUser Not Found", ex.getMessage());
+        return buildResponse(HttpStatus.NOT_FOUND, "User Not Found", ex.getMessage());
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<Object> handleInvalidCredentials(InvalidCredentialsException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Credentials", ex.getMessage());
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex) {
-        log.warn("Access denied: {}", ex.getMessage());
-        return buildResponse(HttpStatus.FORBIDDEN, "Access Denied", ex.getMessage());
     }
 
     @ExceptionHandler(CourseNotFoundException.class)

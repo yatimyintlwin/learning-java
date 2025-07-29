@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         AppUser appUser = userRepository.findByUsername(username);
 
         if (appUser == null) {
-            throw new UsernameNotFoundException("AppUser not found or not enabled: " + username);
+            throw new UsernameNotFoundException("User not found: " + username);
         }
 
         return User.builder()

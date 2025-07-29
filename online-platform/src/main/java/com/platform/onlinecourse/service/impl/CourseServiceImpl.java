@@ -26,7 +26,7 @@ public class CourseServiceImpl implements CourseService {
         log.info("Attempting to create course with title: {}", course.getTitle());
 
         if (courseRepository.findByCourseTitle(course.getTitle()) != null) {
-            log.warn("Course creation failed - course already exists: {}", course.getTitle());
+            log.warn("Course already exists: {}", course.getTitle());
             throw new InvalidCredentialsException("Course already exists");
         }
 

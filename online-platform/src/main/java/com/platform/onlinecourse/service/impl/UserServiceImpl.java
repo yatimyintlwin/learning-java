@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
         if (appUser == null) {
             log.warn("Login failed: User not found - {}", request.getUsername());
-            throw new UserNotFoundException("AppUser not found");
+            throw new UserNotFoundException("User not found");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), appUser.getPassword())) {

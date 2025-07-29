@@ -24,6 +24,6 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@PathVariable String username) {
         AppUser deletedAppUser = userService.deleteUser(username);
         if (deletedAppUser == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok("AppUser deleted successfully");
+        return ResponseEntity.ok("User deleted successfully");
     }
 }
