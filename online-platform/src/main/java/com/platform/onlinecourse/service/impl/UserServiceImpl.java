@@ -3,6 +3,7 @@ package com.platform.onlinecourse.service.impl;
 import com.platform.onlinecourse.dto.LoginRequest;
 import com.platform.onlinecourse.dto.RegisterRequest;
 import com.platform.onlinecourse.exception.InvalidCredentialsException;
+import com.platform.onlinecourse.exception.UserAlreadyExistException;
 import com.platform.onlinecourse.exception.UserNotFoundException;
 import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
         if (userRepository.findByUsername(request.getUsername()) != null) {
             log.warn("Registration failed: Username already exists - {}", request.getUsername());
-            throw new InvalidCredentialsException("Username already exists");
+            throw new UserAlreadyExistException("Username already exists");
         }
 
         AppUser appUser = new AppUser();

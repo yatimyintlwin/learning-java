@@ -1,7 +1,7 @@
 package com.platform.onlinecourse.service.impl;
 
+import com.platform.onlinecourse.exception.CourseAlreadyExistException;
 import com.platform.onlinecourse.exception.CourseNotFoundException;
-import com.platform.onlinecourse.exception.InvalidCredentialsException;
 import com.platform.onlinecourse.model.Course;
 import com.platform.onlinecourse.repository.CourseRepository;
 import com.platform.onlinecourse.service.CourseService;
@@ -27,7 +27,7 @@ public class CourseServiceImpl implements CourseService {
 
         if (courseRepository.findByCourseTitle(course.getTitle()) != null) {
             log.warn("Course already exists: {}", course.getTitle());
-            throw new InvalidCredentialsException("Course already exists");
+            throw new CourseAlreadyExistException("Course already exists");
         }
 
         course.setId(UUID.randomUUID().toString());

@@ -19,7 +19,7 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private static final Duration EXPIRATION = Duration.ofHours(1);
+    private static final long EXPIRATION = 1000 * 60 * 60;
 
     private Key getSigningKey() {
         log.trace("Retrieving signing key for JWT");
@@ -28,7 +28,7 @@ public class JwtUtil {
 
     public String generateToken(AppUser appUser) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION.toMillis());
+        Date expiry = new Date(now.getTime() + EXPIRATION);
 
         log.debug("Generating JWT for user: {}", appUser.getUsername());
         log.trace("Token expiration set to: {}", expiry);

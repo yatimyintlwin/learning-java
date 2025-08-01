@@ -46,24 +46,22 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public AppUser findByUsername(String username) {
         String normalizedUsername = NormalizationUtil.normalize(username);
-        QueryRequest request = QueryRequest.builder()
+
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("pk", AttributeValue.fromS("USERS"));
+        key.put("sk", AttributeValue.fromS("USERNAME#" + normalizedUsername));
+
+        GetItemRequest request = GetItemRequest.builder()
                 .tableName(tableName)
-                .keyConditionExpression("pk = :pk AND sk = :sk")
-                .expressionAttributeValues(Map.of(
-                        ":pk", AttributeValue.fromS("USERS"),
-                        ":sk", AttributeValue.fromS("USERNAME#" + normalizedUsername)
-                ))
+                .key(key)
                 .build();
 
-        QueryResponse response = dynamoDbClient.query(request);
-
-        if (response.count() == 0) {
+        Map<String, AttributeValue> item = dynamoDbClient.getItem(request).item();
+        if (item == null || item.isEmpty()) {
             return null;
         }
-
-        return mapToUser(response.items().get(0));
+        return mapToUser(item);
     }
-
 
     @Override
     public AppUser deleteById(String username) {

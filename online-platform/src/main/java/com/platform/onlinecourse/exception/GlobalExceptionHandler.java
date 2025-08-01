@@ -24,9 +24,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, status);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Object> handleUserNotFound(UserNotFoundException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, "User Not Found", ex.getMessage());
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleNotFound(ResourceNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistException.class)
+    public ResponseEntity<Object> handleAlreadyExist(ResourceAlreadyExistException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Already Exist", ex.getMessage());
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
@@ -34,15 +39,10 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Credentials", ex.getMessage());
     }
 
-    @ExceptionHandler(CourseNotFoundException.class)
-    public ResponseEntity<Object> handleCourseNotFound(CourseNotFoundException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, "Course Not Found", ex.getMessage());
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", "Required request body is missing or malformed.");
-    }
+//    @ExceptionHandler(HttpMessageNotReadableException.class)
+//    public ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+//        return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", "Required request body is missing or malformed.");
+//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex) {
