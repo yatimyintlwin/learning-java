@@ -1,5 +1,6 @@
 package com.platform.onlinecourse.controller;
 
+import com.platform.onlinecourse.dto.CourseRequest;
 import com.platform.onlinecourse.model.Course;
 import com.platform.onlinecourse.service.CourseService;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class CourseController {
 
     @PostMapping
     @PreAuthorize("hasRole('INSTRUCTOR')")
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        return ResponseEntity.ok(courseService.createCourse(course));
+    public ResponseEntity<Course> createCourse(@RequestBody CourseRequest request) {
+        return ResponseEntity.ok(courseService.createCourse(request));
     }
 
     @GetMapping

@@ -9,12 +9,18 @@ import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
 import com.platform.onlinecourse.service.UserService;
 import com.platform.onlinecourse.utils.JwtUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -23,13 +29,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public UserServiceImpl(UserRepository userRepository,
                            JwtUtil jwtUtil,
-                           BCryptPasswordEncoder passwordEncoder) {
+                           BCryptPasswordEncoder passwordEncoder,
+                           AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -57,28 +66,27 @@ public class UserServiceImpl implements UserService {
     public String login(LoginRequest request) {
         log.info("Login attempt for user: {}", request.getUsername());
 
-        AppUser appUser = userRepository.findByUsername(request.getUsername());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
 
-        if (appUser == null) {
-            log.warn("Login failed: User not found - {}", request.getUsername());
-            throw new UserNotFoundException("User not found");
-        }
+            UserDetails user = (UserDetails) authentication.getPrincipal();
+            String token = jwtUtil.generateToken(user);
+            log.info("Login successful for user: {}", user.getUsername());
+            return token;
 
-        if (!passwordEncoder.matches(request.getPassword(), appUser.getPassword())) {
+        } catch (AuthenticationException e) {
             log.warn("Login failed: Invalid credentials for user - {}", request.getUsername());
-            throw new InvalidCredentialsException("Invalid password or username");
+            throw new InvalidCredentialsException("Invalid username or password");
         }
-
-        String token = jwtUtil.generateToken(appUser);
-        log.info("Login successful for user: {}", request.getUsername());
-        return token;
     }
 
     @Override
     public AppUser deleteUser(String username) {
         log.info("Attempting to delete user: {}", username);
 
-        AppUser deleted = userRepository.deleteById(username);
+        AppUser deleted = userRepository.deleteByUsername(username);
         if (deleted == null) {
             log.error("User deletion failed: User not found - {}", username);
             throw new UserNotFoundException("AppUser not found for deletion");

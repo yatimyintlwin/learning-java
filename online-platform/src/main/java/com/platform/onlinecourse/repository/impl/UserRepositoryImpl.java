@@ -3,6 +3,7 @@ package com.platform.onlinecourse.repository.impl;
 import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
 import com.platform.onlinecourse.utils.NormalizationUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static com.platform.onlinecourse.mapper.UserMapper.mapToUser;
 
+@Slf4j
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -36,6 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
+                .conditionExpression("attribute_not_exists(username)")
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
@@ -64,23 +67,25 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public AppUser deleteById(String username) {
-        AppUser appUser = findByUsername(username);
-        if (appUser == null) {
-            return null;
-        }
+    public AppUser deleteByUsername(String username) {
+        String normalizedUsername = NormalizationUtil.normalize(username);
 
         Map<String, AttributeValue> key = new HashMap<>();
         key.put("pk", AttributeValue.fromS("USERS"));
-        key.put("sk", AttributeValue.fromS("USERNAME#" + username));
+        key.put("sk", AttributeValue.fromS("USERNAME#" + normalizedUsername));
 
         DeleteItemRequest deleteRequest = DeleteItemRequest.builder()
                 .tableName(tableName)
                 .key(key)
+                .conditionExpression("attribute_exists(pk) AND attribute_exists(sk)")
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
-        dynamoDbClient.deleteItem(deleteRequest);
-        return appUser;
+        DeleteItemResponse response = dynamoDbClient.deleteItem(deleteRequest);
+        Map<String, AttributeValue> deletedItem = response.attributes();
+
+            log.info("Deleted user: {}", deletedItem);
+            return mapToUser(deletedItem);
+
     }
 }

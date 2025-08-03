@@ -58,22 +58,20 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public Course findByCourseTitle(String title) {
         String normalizedTitle = NormalizationUtil.normalize(title);
-        QueryRequest request = QueryRequest.builder()
+
+        Map<String, AttributeValue> key = new HashMap<>();
+        key.put("pk", AttributeValue.fromS("COURSE"));
+        key.put("sk", AttributeValue.fromS("COURSE#" + normalizedTitle));
+
+        GetItemRequest request = GetItemRequest.builder()
                 .tableName(tableName)
-                .keyConditionExpression("pk = :pk AND sk = :sk")
-                .expressionAttributeValues(Map.of(
-                        ":pk", AttributeValue.fromS("COURSE"),
-                        ":sk", AttributeValue.fromS("COURSE#" + normalizedTitle)
-                ))
+                .key(key)
                 .build();
 
-        QueryResponse response = dynamoDbClient.query(request);
-
-        if (response.count() == 0) {
+        Map<String, AttributeValue> item = dynamoDbClient.getItem(request).item();
+        if (item == null || item.isEmpty()) {
             return null;
         }
-
-        return mapToCourse(response.items().get(0));
+        return mapToCourse(item);
     }
-
 }

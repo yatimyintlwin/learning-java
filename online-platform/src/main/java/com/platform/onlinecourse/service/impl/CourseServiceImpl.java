@@ -1,5 +1,6 @@
 package com.platform.onlinecourse.service.impl;
 
+import com.platform.onlinecourse.dto.CourseRequest;
 import com.platform.onlinecourse.exception.CourseAlreadyExistException;
 import com.platform.onlinecourse.exception.CourseNotFoundException;
 import com.platform.onlinecourse.model.Course;
@@ -22,17 +23,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course createCourse(Course course) {
-        log.info("Attempting to create course with title: {}", course.getTitle());
+    public Course createCourse(CourseRequest request) {
+        log.info("Attempting to create course with title: {}", request.getTitle());
 
-        if (courseRepository.findByCourseTitle(course.getTitle()) != null) {
-            log.warn("Course already exists: {}", course.getTitle());
+        if (courseRepository.findByCourseTitle(request.getTitle()) != null) {
+            log.warn("Course already exists: {}", request.getTitle());
             throw new CourseAlreadyExistException("Course already exists");
         }
 
+        Course course = new Course();
         course.setId(UUID.randomUUID().toString());
-        course.setTitle(course.getTitle());
-        course.setDescription(course.getDescription());
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
 
         Course savedCourse = courseRepository.save(course);
 

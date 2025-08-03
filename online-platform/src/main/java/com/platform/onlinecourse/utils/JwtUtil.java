@@ -1,16 +1,14 @@
 package com.platform.onlinecourse.utils;
 
-import com.platform.onlinecourse.model.AppUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.Duration;
 import java.util.Date;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -19,29 +17,30 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private static final long EXPIRATION = 1000 * 60 * 60;
+    @Value("${jwt.expiration}")
+    private long jwtExpirationMillis;
 
     private Key getSigningKey() {
         log.trace("Retrieving signing key for JWT");
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(AppUser appUser) {
+    public String generateToken(UserDetails userDetails) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION);
+        Date expiry = new Date(now.getTime() + jwtExpirationMillis);
 
-        log.debug("Generating JWT for user: {}", appUser.getUsername());
+        log.debug("Generating JWT for user: {}", userDetails.getUsername());
         log.trace("Token expiration set to: {}", expiry);
 
         String token = Jwts.builder()
-                .setSubject(appUser.getUsername())
-                .claim("role", appUser.getRole())
+                .setSubject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities())
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
 
-        log.info("JWT token generated successfully for user: {}", appUser.getUsername());
+        log.info("JWT token generated successfully for user: {}", userDetails.getUsername());
         return token;
     }
 
@@ -49,23 +48,6 @@ public class JwtUtil {
         String username = getClaims(token).getSubject();
         log.debug("Extracted username from token: {}", username);
         return username;
-    }
-
-    public String extractRole(String token) {
-        String role = getClaims(token).get("role", String.class);
-        log.debug("Extracted role from token: {}", role);
-        return role;
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            getClaims(token);
-            log.trace("Token is valid");
-            return true;
-        } catch (JwtException e) {
-            log.warn("Invalid JWT token: {}", e.getMessage());
-            return false;
-        }
     }
 
     public boolean isTokenExpired(String token) {
