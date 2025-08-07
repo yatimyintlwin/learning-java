@@ -38,7 +38,6 @@ public class UserRepositoryImpl implements UserRepository {
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
-                .conditionExpression("attribute_not_exists(username)")
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
@@ -86,6 +85,5 @@ public class UserRepositoryImpl implements UserRepository {
 
             log.info("Deleted user: {}", deletedItem);
             return mapToUser(deletedItem);
-
     }
 }

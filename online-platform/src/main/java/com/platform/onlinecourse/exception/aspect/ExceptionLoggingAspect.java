@@ -17,7 +17,8 @@ public class ExceptionLoggingAspect {
 
         try {
             Object result = joinPoint.proceed();
-            log.info("Completed method: {} - Returned: {}", methodName, result);
+            log.info("Completed method: {}", methodName);
+            log.debug("Completed method: {} - Returned: {}", methodName, result);
             return result;
         } catch (Throwable ex) {
             log.error("Exception in method: {} with arguments {}. Exception: {}",

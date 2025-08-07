@@ -24,10 +24,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(CourseRequest request) {
-        log.info("Attempting to create course with title: {}", request.getTitle());
-
         if (courseRepository.findByCourseTitle(request.getTitle()) != null) {
-            log.warn("Course already exists: {}", request.getTitle());
+            log.warn("Failed to create course: title '{}' already exists", request.getTitle());
             throw new CourseAlreadyExistException("Course already exists");
         }
 
@@ -39,21 +37,15 @@ public class CourseServiceImpl implements CourseService {
         Course savedCourse = courseRepository.save(course);
 
         log.info("Course created successfully: {} (ID: {})", savedCourse.getTitle(), savedCourse.getId());
-        log.debug("Course details: {}", savedCourse);
         return savedCourse;
     }
 
     @Override
     public List<Course> getAllCourses() {
-        log.info("Fetching all courses");
         List<Course> courses = courseRepository.findAll();
-
         if (courses.isEmpty()) {
-            log.warn("No courses available in the repository");
             throw new CourseNotFoundException("No courses available");
         }
-
-        log.debug("Number of courses fetched: {}", courses.size());
         return courses;
     }
 }

@@ -47,7 +47,9 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <springProperty scope="context" name="LOG_LEVEL" source="logging.level.root" defaultValue="INFO" />
+
+    <root level="${LOG_LEVEL}">
         <appender-ref ref="console"/>
         <appender-ref ref="ROLLING_FILE"/>
     </root>

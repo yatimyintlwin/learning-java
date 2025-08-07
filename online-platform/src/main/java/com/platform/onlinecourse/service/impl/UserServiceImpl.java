@@ -43,10 +43,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser register(RegisterRequest request) {
-        log.info("Attempting to register user: {}", request.getUsername());
-
         if (userRepository.findByUsername(request.getUsername()) != null) {
-            log.warn("Registration failed: Username already exists - {}", request.getUsername());
+            log.warn("Failed to register user: username '{}' already exists", request.getUsername());
             throw new UserAlreadyExistException("Username already exists");
         }
 
@@ -57,42 +55,35 @@ public class UserServiceImpl implements UserService {
         appUser.setRole(request.getRole());
         appUser.setEnabled(true);
 
-        AppUser savedUser = userRepository.save(appUser);
-        log.info("User registered successfully: {}", savedUser.getUsername());
-        return savedUser;
+        try {
+            return userRepository.save(appUser);
+        } catch (Exception ex) {
+            log.error("Failed to register user '{}': {}", request.getUsername(), ex.getMessage(), ex);
+            throw new RuntimeException("Failed to register user", ex);
+        }
     }
 
     @Override
     public String login(LoginRequest request) {
-        log.info("Login attempt for user: {}", request.getUsername());
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
-
             UserDetails user = (UserDetails) authentication.getPrincipal();
-            String token = jwtUtil.generateToken(user);
-            log.info("Login successful for user: {}", user.getUsername());
-            return token;
+            return jwtUtil.generateToken(user);
 
         } catch (AuthenticationException e) {
-            log.warn("Login failed: Invalid credentials for user - {}", request.getUsername());
+            log.warn("Failed login attempt for username '{}'", request.getUsername());
             throw new InvalidCredentialsException("Invalid username or password");
         }
     }
 
     @Override
     public AppUser deleteUser(String username) {
-        log.info("Attempting to delete user: {}", username);
-
         AppUser deleted = userRepository.deleteByUsername(username);
         if (deleted == null) {
-            log.error("User deletion failed: User not found - {}", username);
             throw new UserNotFoundException("AppUser not found for deletion");
         }
-
-        log.info("User deleted successfully: {}", deleted.getUsername());
         return deleted;
     }
 }
