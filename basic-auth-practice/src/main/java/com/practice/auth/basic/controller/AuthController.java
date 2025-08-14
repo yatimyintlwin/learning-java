@@ -2,7 +2,7 @@ package com.practice.auth.basic.controller;
 
 import com.practice.auth.basic.model.AuthRequest;
 import com.practice.auth.basic.service.UserService;
-import com.practice.auth.basic.utils.JwtUtils;
+import com.practice.auth.basic.utils.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
         this.authenticationManager = authenticationManager;
-        this.jwtUtils = jwtUtils;
+        this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
 
@@ -34,7 +34,7 @@ public class AuthController {
         );
 
         UserDetails user = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtils.generateToken(user);
+        String token = jwtUtil.generateToken(user);
 
         return ResponseEntity.ok(Map.of("token", token));
     }

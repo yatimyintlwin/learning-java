@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class JwtUtils {
+public class JwtUtil {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
     private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("MySecretKeyForJwtTokenGeneration1234567890".getBytes());

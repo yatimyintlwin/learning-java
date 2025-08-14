@@ -1,6 +1,6 @@
 package com.practice.auth.basic.config;
 
-import com.practice.auth.basic.utils.JwtUtils;
+import com.practice.auth.basic.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +18,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtils jwtUtils;
+    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     
-    public JwtAuthenticationFilter(JwtUtils jwtUtils, @Qualifier("H2") UserDetailsService userDetailsService) {
-        this.jwtUtils = jwtUtils;
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, @Qualifier("H2") UserDetailsService userDetailsService) {
+        this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
 
@@ -40,12 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authHeader.substring(7);
-        String username = jwtUtils.extractUsername(token);
+        String username = jwtUtil.extractUsername(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            if (username.equals(userDetails.getUsername()) && !jwtUtils.isTokenExpired(token)) {
+            if (username.equals(userDetails.getUsername()) && !jwtUtil.isTokenExpired(token)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
