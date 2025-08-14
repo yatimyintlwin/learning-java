@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -44,8 +46,20 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", "Required request body is missing or malformed.");
     }
 
+    @ExceptionHandler(DynamoDbException.class)
+    public ResponseEntity<Object> handleDynamoDbException(DynamoDbException ex) {
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Database operation failed", ex.getMessage());
+    }
+
+    @ExceptionHandler(SdkClientException.class)
+    public ResponseEntity<Object> handleSdkClientException(SdkClientException ex) {
+        log.error("AWS SDK client error: {}", ex.getMessage(), ex);
+        return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, "AWS SDK client error", "Unable to connect to database service");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex) {
+        log.error("Unhandled exception: {}", ex.getMessage(), ex);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", ex.getMessage());
     }
 }

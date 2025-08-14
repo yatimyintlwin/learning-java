@@ -1,5 +1,7 @@
 package com.platform.onlinecourse.repository.impl;
 
+import com.platform.onlinecourse.exception.UserAlreadyExistException;
+import com.platform.onlinecourse.exception.UserNotFoundException;
 import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
 import com.platform.onlinecourse.utils.NormalizationUtil;
@@ -38,11 +40,17 @@ public class UserRepositoryImpl implements UserRepository {
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
+                .conditionExpression("attribute_not_exists(username)")
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
-        dynamoDbClient.putItem(request);
-        return appUser;
+        try {
+            dynamoDbClient.putItem(request);
+            return appUser;
+        } catch (ConditionalCheckFailedException e) {
+            log.warn("Failed to save user '{}': username already exists", appUser.getUsername());
+            throw new UserAlreadyExistException("Username already exists");
+        }
     }
 
     @Override
@@ -80,10 +88,14 @@ public class UserRepositoryImpl implements UserRepository {
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
-        DeleteItemResponse response = dynamoDbClient.deleteItem(deleteRequest);
-        Map<String, AttributeValue> deletedItem = response.attributes();
-
+        try {
+            DeleteItemResponse response = dynamoDbClient.deleteItem(deleteRequest);
+            Map<String, AttributeValue> deletedItem = response.attributes();
             log.info("Deleted user: {}", deletedItem);
             return mapToUser(deletedItem);
+        } catch (ConditionalCheckFailedException e) {
+            log.warn("Failed to delete user: '{}'", username);
+            throw new UserNotFoundException("User with name '" + username + "' not found");
+        }
     }
 }

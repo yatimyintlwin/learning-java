@@ -1,9 +1,11 @@
 package com.platform.onlinecourse.repository.impl;
 
+import com.platform.onlinecourse.exception.CourseAlreadyExistException;
 import com.platform.onlinecourse.mapper.CourseMapper;
 import com.platform.onlinecourse.model.Course;
 import com.platform.onlinecourse.repository.CourseRepository;
 import com.platform.onlinecourse.utils.NormalizationUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
@@ -12,6 +14,7 @@ import java.util.*;
 
 import static com.platform.onlinecourse.mapper.CourseMapper.mapToCourse;
 
+@Slf4j
 @Repository
 public class CourseRepositoryImpl implements CourseRepository {
 
@@ -33,11 +36,17 @@ public class CourseRepositoryImpl implements CourseRepository {
         PutItemRequest request = PutItemRequest.builder()
                 .tableName(tableName)
                 .item(item)
+                .conditionExpression("attribute_not_exists(title)")
                 .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
-        dynamoDbClient.putItem(request);
-        return course;
+        try {
+            dynamoDbClient.putItem(request);
+            return course;
+        } catch (ConditionalCheckFailedException e) {
+            log.warn("Failed to save course '{}': course already exists", course.getTitle());
+            throw new CourseAlreadyExistException("Course already exists");
+        }
     }
 
     @Override

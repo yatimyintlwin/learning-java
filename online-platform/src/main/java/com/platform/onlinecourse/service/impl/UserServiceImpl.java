@@ -3,7 +3,6 @@ package com.platform.onlinecourse.service.impl;
 import com.platform.onlinecourse.dto.LoginRequest;
 import com.platform.onlinecourse.dto.RegisterRequest;
 import com.platform.onlinecourse.exception.InvalidCredentialsException;
-import com.platform.onlinecourse.exception.UserAlreadyExistException;
 import com.platform.onlinecourse.exception.UserNotFoundException;
 import com.platform.onlinecourse.model.AppUser;
 import com.platform.onlinecourse.repository.UserRepository;
@@ -43,10 +42,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser register(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()) != null) {
-            log.warn("Failed to register user: username '{}' already exists", request.getUsername());
-            throw new UserAlreadyExistException("Username already exists");
-        }
+//        if (userRepository.findByUsername(request.getUsername()) != null) {
+//            log.warn("Failed to register user: username '{}' already exists", request.getUsername());
+//            throw new UserAlreadyExistException("Username already exists");
+//        }
 
         AppUser appUser = new AppUser();
         appUser.setId(UUID.randomUUID().toString());
@@ -55,12 +54,7 @@ public class UserServiceImpl implements UserService {
         appUser.setRole(request.getRole());
         appUser.setEnabled(true);
 
-        try {
             return userRepository.save(appUser);
-        } catch (Exception ex) {
-            log.error("Failed to register user '{}': {}", request.getUsername(), ex.getMessage(), ex);
-            throw new RuntimeException("Failed to register user", ex);
-        }
     }
 
     @Override
@@ -80,10 +74,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AppUser deleteUser(String username) {
-        AppUser deleted = userRepository.deleteByUsername(username);
-        if (deleted == null) {
-            throw new UserNotFoundException("AppUser not found for deletion");
-        }
-        return deleted;
+        return userRepository.deleteByUsername(username);
     }
 }

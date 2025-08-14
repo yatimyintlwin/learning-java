@@ -1,10 +1,11 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-    <property name="LOG_PATH" value="/Users/yatimyintlwin/Personal/onlineLogging"/>
+    <springProperty scope="context" name="LOG_PATH" source="log.path" defaultValue="./logs" />
+    <springProperty scope="context" name="LOG_FILENAME" source="log.filename" defaultValue="app.log"/>
 
     <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/online.log</file>
+        <file>${LOG_PATH}/${LOG_FILENAME}</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -26,20 +27,6 @@
             </providers>
         </encoder>
     </appender>
-
-<!--        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">-->
-<!--            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">-->
-<!--                <prettyPrint>true</prettyPrint>-->
-<!--                <providers>-->
-<!--                    <timestamp><fieldName>timestamp</fieldName></timestamp>-->
-<!--                    <logLevel><fieldName>level</fieldName></logLevel>-->
-<!--                    <loggerName><fieldName>logger</fieldName></loggerName>-->
-<!--                    <threadName><fieldName>thread</fieldName></threadName>-->
-<!--                    <message><fieldName>message</fieldName></message>-->
-<!--                    <stackTrace><fieldName>stacktrace</fieldName></stackTrace>-->
-<!--                </providers>-->
-<!--            </encoder>-->
-<!--        </appender>-->
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

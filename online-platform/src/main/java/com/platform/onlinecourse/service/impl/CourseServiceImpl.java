@@ -24,10 +24,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course createCourse(CourseRequest request) {
-        if (courseRepository.findByCourseTitle(request.getTitle()) != null) {
-            log.warn("Failed to create course: title '{}' already exists", request.getTitle());
-            throw new CourseAlreadyExistException("Course already exists");
-        }
+//        if (courseRepository.findByCourseTitle(request.getTitle()) != null) {
+//            log.warn("Failed to create course: title '{}' already exists", request.getTitle());
+//            throw new CourseAlreadyExistException("Course already exists");
+//        }
 
         Course course = new Course();
         course.setId(UUID.randomUUID().toString());
