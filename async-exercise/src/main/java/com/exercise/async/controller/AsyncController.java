@@ -15,8 +15,9 @@ public class AsyncController {
 
     @GetMapping("/run-async")
     public String runAsyncTasks() {
-        asyncService.longRunningTask("Task-1");
-        asyncService.longRunningTask("Task-2");
+        asyncService.taskChain1();
+        asyncService.taskChain2();
+        asyncService.taskChain3();
         return "Tasks started! (Check console logs)";
     }
 }
