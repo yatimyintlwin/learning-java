@@ -7,31 +7,47 @@ import org.springframework.stereotype.Service;
 public class AsyncService {
 
     @Async
-    public void taskChain1() {
-        run("Task-1");
-        run("Task-1.1");
-        run("Task-1.2");
-    }
+    public void longRunningTask(String taskName) {
+        try {
+            System.out.println("Started: " + taskName + " on " + Thread.currentThread().getName());
+            Thread.sleep(3000);
 
-    @Async("taskExecutor1")
-    public void taskChain2() {
-        run("Task-2");
-        run("Task-2.1");
+            if ("Task-1".equals(taskName)) {
+                task1_1();
+            }
+
+            System.out.println("Completed: " + taskName);
+        } catch (Exception e) {
+            System.out.println("Error in " + taskName + " -> " + e.getMessage());
+        }
     }
 
     @Async
-    public void taskChain3() {
-        run("Task-3");
-        run("Task-3.1");
+    public void task1_1() {
+        try {
+            System.out.println("  Started: Task-1.1 on " + Thread.currentThread().getName());
+            Thread.sleep(2000);
+
+            if (true) {
+                throw new RuntimeException("Simulated exception in Task-1.1");
+            }
+
+            System.out.println("  Completed: Task-1.1");
+
+            task1_2();
+
+        } catch (Exception e) {
+            System.out.println("  Error in Task-1.1 -> " + e.getMessage());
+        }
     }
 
-    private void run(String taskName) {
+    private void task1_2() {
         try {
-            System.out.println("Started: " + taskName + " on " + Thread.currentThread().getName());
-            Thread.sleep(5000);
-            System.out.println("Completed: " + taskName);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            System.out.println("    Started: Task-1.2 on " + Thread.currentThread().getName());
+            Thread.sleep(2000);
+            System.out.println("    Completed: Task-1.2");
+        } catch (Exception e) {
+            System.out.println("    Error in Task-1.2 -> " + e.getMessage());
         }
     }
 }

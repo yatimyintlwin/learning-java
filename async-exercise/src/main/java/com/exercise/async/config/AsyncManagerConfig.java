@@ -9,15 +9,15 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AsyncManagerConfig implements AsyncConfigurer {
 
-    private final Executor taskExecutor2;
+    private final Executor taskExecutor1;
 
-    public AsyncManagerConfig(Executor taskExecutor2) {
-        this.taskExecutor2 = taskExecutor2;
+    public AsyncManagerConfig(Executor taskExecutor1) {
+        this.taskExecutor1 = taskExecutor1;
     }
 
     @Override
     public Executor getAsyncExecutor() {
-        return taskExecutor2;
+        return taskExecutor1;
     }
 
     @Override
