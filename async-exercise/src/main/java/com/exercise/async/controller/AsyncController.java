@@ -18,6 +18,13 @@ public class AsyncController {
         asyncService.longRunningTask("Task-1");
         asyncService.longRunningTask("Task-2");
         asyncService.longRunningTask("Task-3");
+        asyncService.longRunningTask("Task-4");
+        asyncService.longRunningTask("Task-5");
+        asyncService.longRunningTask("Task-6");
+        asyncService.longRunningTask("Task-7");
+        asyncService.longRunningTask("Task-8");
+        asyncService.longRunningTask("Task-9");
+        asyncService.longRunningTask("Task-10");
         return "Tasks started! (Check console logs)";
     }
 
