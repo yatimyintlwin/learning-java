@@ -107,6 +107,7 @@ public class ProductRepositoryImpl implements ProductRepository {
         DeleteItemRequest request = DeleteItemRequest.builder()
                 .tableName(tableName)
                 .key(key)
+                .returnValues(ReturnValue.ALL_OLD)
                 .build();
 
         dynamoDbClient.deleteItem(request);
