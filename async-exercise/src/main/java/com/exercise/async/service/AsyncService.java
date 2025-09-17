@@ -16,13 +16,13 @@ public class AsyncService {
     public void longRunningTask(String taskName) {
         try {
             System.out.println("Started: " + taskName + " on " + Thread.currentThread().getName());
-//            Thread.sleep(3000);
+            Thread.sleep(3000);
 
-//            if ("Task-1".equals(taskName)) {
-//                task1_1();
-//            }
+            if ("Task-1".equals(taskName)) {
+                task1_1();
+            }
 
-//            System.out.println("Completed: " + taskName);
+            System.out.println("Completed: " + taskName);
         } catch (Exception e) {
             System.out.println("Error in " + taskName + " -> " + e.getMessage());
         }
