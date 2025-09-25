@@ -1,0 +1,110 @@
+openapi: 3.0.1
+info:
+  title: Customer API
+  description: API for managing customers
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /customers:
+    post:
+      summary: Create a new customer
+      description: Adds a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        "201":
+          description: Customer created successfully
+        "400":
+          description: Invalid input data
+    get:
+      summary: Get all customers
+      description: Returns a list of all customers
+      responses:
+        "200":
+          description: List of customers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+
+  /customers/{id}:
+    get:
+      summary: Get customer by ID
+      description: Find a customer by their ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        "404":
+          description: Customer not found
+
+    put:
+      summary: Update customer
+      description: Updates customer details by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        "200":
+          description: Customer updated successfully
+        "404":
+          description: Customer not found
+        "400":
+          description: Invalid input data
+
+    delete:
+      summary: Delete customer
+      description: Deletes customer by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer deleted successfully
+        "404":
+          description: Customer not found
+
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          example: john@example.com
