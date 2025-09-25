@@ -32,6 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/guest/**").hasAnyRole("GUEST", "ADMIN")
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 );
 //                .headers(headers -> headers.frameOptions(Customizer.withDefaults()));
